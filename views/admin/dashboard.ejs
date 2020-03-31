@@ -1,0 +1,305 @@
+<% include ../partials/dashboardHeader %>
+
+
+
+    <!-- HEADER -->
+    <header id="main-header" class="py-2 bg-primary text-white">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h1><i class="fas fa-cog"></i> Dashboard</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ACTION SECTION -->
+    <section id="action" class="py-4 mb-4 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <a
+              href=""
+              class="btn btn-primary btn-block"
+              data-toggle="modal"
+              data-target="#addPostModal"
+            >
+              <i class="fas fa-plus"></i> Add Post
+            </a>
+          </div>
+          <div class="col-md-3">
+            <% if(currentUser && currentUser.isAdmin){ %>
+            <a
+              href=""
+              class="btn btn-success btn-block"
+              data-toggle="modal"
+              data-target="#addCategoryModal"
+            >
+              <i class="fas fa-plus"></i> Add Category
+            </a>
+            <% } %>
+          </div>
+          <div class="col-md-3">
+            <% if(currentUser && currentUser.isAdmin){ %>
+            <a
+              href=""
+              class="btn btn-warning btn-block"
+              data-toggle="modal"
+              data-target="#addUserModal"
+            >
+              <i class="fas fa-plus"></i> Add User
+            </a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POST SECTION -->
+    <section id="posts">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header"><h4>Latest Posts</h4></div>
+              <div class="card-body">
+                <table class="table table-striped">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>#</th>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>Date</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  
+                  <% let postCount= 1; posts.forEach(post => { %>
+                    <tr>
+                      <td><%= postCount %></td>
+                      <td><%=post.title%></td>
+                      <td><%= post.category ? post.category : "no category" %></td>
+                      <td><%= post.created.toDateString() %></td>
+                      <td>
+                        <a href="/posts/<%= post._id %>" class="btn btn-secondary">
+                          <i class="fas fa-angle-double-right"></i> Details</a
+                        >
+                      </td>
+                    </tr>
+                  <% postCount++ });  %>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- PAGINATION -->
+              <nav aria-label="Page navigation">
+                <% if (pages && pages > 0) { %>
+                <ul class="pagination justify-content-center">
+                    <% if (current == 1) { %>
+                    <li class="page-item disabled"><a class="page-link">First</a></li>
+                    <% } else { %>
+                    <li><a class="page-link" href="/admin/dashboard">First</a></li>
+                    <% } %>
+            
+                    <% if (current == 1) { %>
+                    <li class="page-item disabled"><a class="page-link">«</a></li>
+                    <% } else { %>
+                    <li><a class="page-link" href="/admin/dashboard?page=<%= Number(current) - 1 %>">«</a></li>
+                    <% } %>
+            
+                    <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+                    <% if (i !== 1) { %>
+                    <li class="page-item disabled"><a class="page-link">...</a></li>
+                    <% } %>
+                    <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                    <% if (i == current) { %>
+                    <li class="active"><a class="page-link"><%= i %></a></li>
+                    <% } else { %>
+                    <li><a class="page-link" href="/admin/dashboard?page=<%= i %>"><%= i %></a></li>
+                    <% } %>
+                    <% if (i == Number(current) + 4 && i < pages) { %>
+                    <li class="page-item disabled"><a class="page-link">...</a></li>
+                    <% } %>
+                    <% } %>
+            
+                    <% if (current == pages) { %>
+                    <li class="page-item disabled"><a class="page-link">»</a></li>
+                    <% } else { %>
+                    <li><a class="page-link" href="/admin/dashboard?page=<%= Number(current) + 1 %>">»</a></li>
+                    <% } %>
+            
+                    <% if (current == pages) { %>
+                    <li class="page-item disabled"><a class="page-link">Last</a></li>
+                    <% } else { %>
+                    <li><a class="page-link" href="/admin/dashboard?page=<%= pages %>">Last</a></li>
+                    <% } %>
+                </ul>
+                <% } %>
+              </nav>
+
+            </div>
+          </div>
+          <!-- col-md-9 -->
+          <div class="col-md-3">
+            <div class="card bg-primary text-center text-white mb-3">
+              <div class="card-body">
+                <h3>Posts</h3>
+                <h4 class="display-4"><i class="fas fa-pencil-alt"></i> <%= (postCount -1) %></h4>
+                <a href="/admin/posts" class="btn btn-outline-light btn-sm">View</a>
+              </div>
+            </div>
+            <div class="card bg-success text-center text-white mb-3">
+              <div class="card-body">
+                <h3>Categories</h3>
+                <% let categoryCount=0; categories.forEach(category => { categoryCount++}) %>
+                <h4 class="display-4"><i class="fas fa-folder"></i> <%= categoryCount%></h4>
+                <a href="/admin/categories" class="btn btn-outline-light btn-sm">View</a>
+              </div>
+            </div>
+            <div class="card bg-warning text-center text-white mb-3">
+              <div class="card-body">
+                <h3>Users</h3>
+                <% let usersCount=0; users.forEach(user => { usersCount++}) %>
+                <h4 class="display-4"><i class="fas fa-users"></i> <%= usersCount%></h4>
+                <a href="/admin/users" class="btn btn-outline-light btn-sm">View</a>
+              </div>
+            </div>
+          </div>
+          <!-- col-md-3 -->
+        </div>
+      </div>
+    </section>
+
+
+    <%#-------------------------------------------------------%>
+
+        <!-- MODALS -->
+
+    <!-- ADD POST MODAL -->
+    <div class="modal fade" id="addPostModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Add Post</h5>
+            <button class="close" data-dismiss="modal">
+              <span class="text-white">&times;</span>
+            </button>
+          </div>
+          <!-- modal-header -->
+          <form  action="/posts" method="POST" enctype="multipart/form-data">
+          <div class="modal-body">            
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input name="post[title]" type="text" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="category">Category</label>
+                <select name="post[category]" class="form-control">
+                  <% categories.forEach(category => { %>
+                      <option value="<%= category.title %>"><%= category.title %></option>
+                  <%  }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="image">Upload Image</label>
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="image" name="image" 
+                  accept="image/*" required />
+                  <label for="image" class="custom-file-label"
+                    >Choose File</label
+                  >
+                </div>
+                <div class="form-text text-muted">Max Size 3mb</div>
+              </div>
+              <div class="form-group">
+                <label for="body">Body</label>
+                <textarea name="post[body]" class="form-control"></textarea>
+              </div>
+          </div>
+            <!-- modal body -->
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary" >
+                Submit
+              </button>
+            </div>
+            <!-- modal-footer -->
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD CATEGORY MODAL -->
+    <div class="modal fade" id="addCategoryModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">Add Category</h5>
+            <button class="close" data-dismiss="modal">
+              <span class="text-white">&times;</span>
+            </button>
+          </div>
+          <!-- modal-header -->
+          <form  action="/admin/categories" method="POST">
+          <div class="modal-body">
+            
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input name="category[title]" type="text" class="form-control" />
+              </div>
+            
+          </div>
+          <!-- modal body -->
+          <div class="modal-footer">
+            <button class="btn btn-success" >
+              Submit
+            </button>
+          </div>
+          <!-- modal-footer -->
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div class="modal fade" id="addUserModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-white">
+            <h5 class="modal-title">Add User</h5>
+            <button class="close" data-dismiss="modal">
+              <span class="text-white">&times;</span>
+            </button>
+          </div>
+          <!-- model-header -->
+          <form action="/register" method="POST" >
+          <div class="modal-body">
+            
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input name="username" type="text" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input name="email" type="email" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input name="password" type="password" class="form-control" />
+              </div>
+              
+          </div>
+          <!-- modal body -->
+          <div class="modal-footer">
+            <button class="btn btn-warning">
+              Submit
+            </button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<%#-------------------------------------------------------%>
+
+
+<% include ../partials/dashboardFooter %>

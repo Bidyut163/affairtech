@@ -1,0 +1,70 @@
+<% include ../partials/left-sidebar  %>
+      <section class="content">
+        <section class="post-header">
+          <div class="post-header__heading">
+            <h1 class="heading-primary mb-sm">
+              <%= post.title %>
+            </h1>
+            <p class="para"><%= post.category %> <span> / <%= post.created.toDateString() %></span></p>
+          </div>
+
+          <div class="post-header__img-box">
+            <img src="<%= post.image %>" alt="post-image" class="post-header__img" />
+          </div>
+        </section>
+
+        <section class="post-content">
+          <div class="post-content__article">
+            <p><%- post.body %></p>
+          </div>
+        </section>
+
+        <h1 class="heading-tetiary mb-sm">Related</h1>
+        <hr class="mb-sm" />
+
+        <section class="article_section">
+        <% posts.forEach(post => { %>
+            <div class="article">
+              <div class="article__heading">
+                <h1 class="heading-secondary mb-sm">
+                  <a href="/posts/<%= post.id %>"><%= post.title %></a>
+                </h1>
+                <p class="small"><%= post.category %></p>
+                <p class="date"><%= post.created.toDateString() %></p>
+              </div>
+              <div class="article__content">
+                <p class="para">
+                  <a href="/posts/<%= post.id %>"><%- post.body.substring(0, 500) %></a>
+                </p>
+              </div>
+              <div class="article__img-box">
+                <a href="/posts/<%= post.id %>">
+                  <img src="<%= post.image %>" alt="article-img" class="article__img" />
+                </a>
+              </div>
+            </div>
+            <!-- article -->
+            <hr class="mb-sm" />
+        <%  }) %>    
+
+         <!-- PAGINATION -->
+          <div class="pagination">
+            <ul class="pagination__list">
+              <% if (current == 1) { %>
+                <li class="pagination__item disabled"><a class="pagination__link">&laquo; Prev</a></li>
+              <% } else { %>  
+                <li class="pagination__item"><a href="/" class="pagination__link">&laquo; Prev</a></li>
+              <% } %>
+
+              <% if (current == pages) { %>
+                <li class="pagination__item disabled"><a class="pagination__link disabled">Next &raquo;</a></li>
+              <% } else { %>
+                <li class="pagination__item"><a href="/?page=<%= Number(current) + 1 %>" class="pagination__link">Next &raquo;</a></li>
+              <% } %>
+            </ul>
+          </div>      
+        </section>
+      </section>
+
+      
+<%  include ../partials/right-sidebar %>
